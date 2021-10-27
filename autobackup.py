@@ -16,10 +16,10 @@ if __name__ == "__main__":
     minutes_passed = 0
     while True:
         now_str = datetime.now().strftime("%Y-%m-%d %H-%M")
-        if minutes_passed > 60:
+        if minutes_passed > 300:
             minutes_passed = 0
             print(now_str + 
-                " - Have passed one hour so we must to do the periodically backup.")
+                " - Have passed five hours so we must to do the periodically backup.")
             backup_periodically()
         time.sleep(60)
         minutes_passed += 1
