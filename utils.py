@@ -9,3 +9,4 @@ def get_data_folder(relative_to):
 
 def get_data_path(relative_to, plus_name):
     return get_data_folder(relative_to) + os.path.sep + plus_name
+
