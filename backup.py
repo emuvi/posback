@@ -5,8 +5,8 @@ import utils
 
 
 class Backup:
+    target_backup_week = "(now::week)"
     target_backup_host = "localhost"
-    target_backup_week = str(dt.datetime.today().weekday())
     data_relative_to = "periodically"
 
     def __init__(self,
@@ -20,21 +20,27 @@ class Backup:
         if data_relative_to:
             self.data_relative_to = data_relative_to
 
+    def get_target_week(self) -> str:
+        if self.target_backup_week == "(now::week)":
+            return str(dt.datetime.today().weekday())
+        else:
+            return self.target_backup_week
+
 
 def backup_globals(backup: Backup):
     new_name = utils.get_data_path(
         backup.data_relative_to,
-        "globals-" + backup.target_backup_week + "-new.bkp")
+        "globals-" + backup.get_target_week() + "-new.bkp")
     if os.path.exists(new_name):
         os.remove(new_name)
     if os.system("pg_dumpall -h " + backup.target_backup_host +
                  " --clean -U postgres -v --globals-only " + "-f " + new_name) == 0:
         old_name = utils.get_data_path(
             backup.data_relative_to,
-            "globals-" + backup.target_backup_week + "-old.bkp")
+            "globals-" + backup.get_target_week() + "-old.bkp")
         now_name = utils.get_data_path(
             backup.data_relative_to,
-            "globals-" + backup.target_backup_week + ".bkp")
+            "globals-" + backup.get_target_week() + ".bkp")
         if os.path.exists(old_name):
             os.remove(old_name)
         if os.path.exists(now_name):
@@ -74,7 +80,7 @@ def list_databases(backup: Backup):
 def backup_database(backup: Backup, db_name: str):
     new_name = utils.get_data_path(
         backup.data_relative_to,
-        "db-" + db_name + "-" + backup.target_backup_week + "-new.bkp")
+        "db-" + db_name + "-" + backup.get_target_week() + "-new.bkp")
     if os.path.exists(new_name):
         os.remove(new_name)
     if os.system("pg_dump -h " + backup.target_backup_host +
@@ -83,10 +89,10 @@ def backup_database(backup: Backup, db_name: str):
                  "-f " + new_name) == 0:
         old_name = utils.get_data_path(
             backup.data_relative_to,
-            "db-" + db_name + "-" + backup.target_backup_week + "-old.bkp")
+            "db-" + db_name + "-" + backup.get_target_week() + "-old.bkp")
         now_name = utils.get_data_path(
             backup.data_relative_to,
-            "db-" + db_name + "-" + backup.target_backup_week + ".bkp")
+            "db-" + db_name + "-" + backup.get_target_week() + ".bkp")
         if os.path.exists(old_name):
             os.remove(old_name)
         if os.path.exists(now_name):

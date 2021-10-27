@@ -5,8 +5,8 @@ import utils
 
 
 class Restore:
+    origin_backup_week = "(now::week)"
     target_restore_host = "localhost"
-    origin_backup_week = str(dt.datetime.today().weekday())
     data_relative_to = "periodically"
 
     def __init__(self,
@@ -20,11 +20,17 @@ class Restore:
         if data_relative_to:
             self.data_relative_to = data_relative_to
 
+    def get_target_week(self) -> str:
+        if self.origin_backup_week == "(now::week)":
+            return str(dt.datetime.today().weekday())
+        else:
+            return self.origin_backup_week
+
 
 def restore_globals(restore: Restore):
     globals_name = utils.get_data_path(
         restore.data_relative_to,
-        "globals-" + restore.origin_backup_week + ".bkp")
+        "globals-" + restore.get_target_week() + ".bkp")
     if os.system("psql -h " + restore.target_restore_host +
                  " -U postgres -f " + globals_name) == 0:
         print("Successfully restore globals.")
@@ -55,7 +61,7 @@ def restore_globals_and_databases(restore: Restore):
     origin_path = utils.get_data_folder(restore.data_relative_to)
     for inside_path in os.listdir(origin_path):
         if inside_path.startswith("db-") and inside_path.endswith(
-                "-" + restore.origin_backup_week + ".bkp"):
+                "-" + restore.get_target_week() + ".bkp"):
             restore_database(restore, os.path.join(origin_path, inside_path))
     print("Successfully finish to restore the globals and all databases.")
 
@@ -65,7 +71,7 @@ if __name__ == "__main__":
     confirm = input(
         "Do you wanna restore the globals and all databases?\n" +
         "  From data: '" + restore.data_relative_to + "'\n" +
-        "  And of week: '" + restore.origin_backup_week + "'\n" +
+        "  And of week: '" + restore.get_target_week() + "'\n" +
         "  And to host: '" + restore.target_restore_host + "' ? (y/N) : ")
     if confirm != "y":
         sys.exit(0)
