@@ -106,6 +106,10 @@ def backup_database(backup: Backup, db_name: str):
 
 
 def backup_globals_and_databases(backup: Backup):
+    print("Making the backup of globals and all databases\n" +
+          "  From data: '" + backup.data_relative_to + "'\n" +
+          "  And of week: '" + backup.get_target_week() + "'\n" +
+          "  And to host: '" + backup.target_backup_host + "'")
     backup_globals(backup)
     for db_name in list_databases(backup):
         backup_database(backup, db_name)
