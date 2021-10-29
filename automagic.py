@@ -47,5 +47,7 @@ if __name__ == "__main__":
             print(now_str +
                   " - We don't have internet so we need to do the emergency backup.")
             backup_emergency()
+            time.sleep(120)
+            minutes_passed += 2
         time.sleep(60)
         minutes_passed += 1
