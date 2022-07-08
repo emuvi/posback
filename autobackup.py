@@ -1,7 +1,7 @@
-from datetime import datetime
 import time
-import backup
+from datetime import datetime
 
+import backup
 
 backup_of_host = "pointel.pointto.us"
 
@@ -13,7 +13,7 @@ def backup_periodically():
 
 
 if __name__ == "__main__":
-    minutes_passed = 0
+    minutes_passed = 330
     while True:
         now_str = datetime.now().strftime("%Y-%m-%d %H-%M")
         if minutes_passed > 300:
